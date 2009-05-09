@@ -2,9 +2,7 @@
 
 class Me < Sinatra::Base
   
-  set :static, true # enable/disable static file routes
-  
-  set :app_file, __FILE__ #used to calculate the default :root, :public, and :views options 
+  EMAIL = ENV['email']
   
   get '/' do
     haml :index
@@ -12,10 +10,11 @@ class Me < Sinatra::Base
  
   post '/' do
     if params[:message]
-      #Pony.mail(:to      => 'd.tangren@gmail.com', 
-      #          :from    => 'curious@example.com', 
-      #          :subject => 'message from lessis.me', 
-      #          :body    => params[:message])
+      Pony.mail(:to      => EMAIL, 
+                :from    => 'curious@example.com', 
+                :subject => 'message from lessis.me', 
+                :body    => params[:message]) if ENV['production']
+                
       flash[:notice] = "thanks for saying hello"
     end
     redirect '/ '
@@ -31,14 +30,17 @@ __END__
 !!!
 %html
   %head
+    %meta{:name => "keywords", :content => "doug tangren,less,lessisme,simple,code,ruby,java,blog" } 
+    %meta{:name => "description", :content => "less more and more doug" } 
+    %meta{:name => "author", :content => "Doug Tangren" } 
     %title 
       less is me
-    %link{ :type=>"text/css", :rel=>"stylesheet", :href=>"/stylesheets/app.css" }
+    %link{ :type=>"text/css", :rel=>"stylesheet", :href=>"css/app.css" }
   %body
     - if flash[:notice]
-      #thanks
+      #flash
         =flash[:notice]
-    %ul#list
+    %ul#things
       %li
         %h1
           hi. my name is 
@@ -49,10 +51,10 @@ __END__
               doug
             %span{:class=>"geo"}
               %span{:class=>"latitude", :title=>"40.438651"}
-                40.438651
+                40.777705 
               %span{:class=>"longitude", :title=>"-79.929249"}
-                -79.929249
-            %a{:class=>"email", :href=>"mailto:soft@softprops.net", :rel=>"email"}
+                -73.947958
+            %a{:class=>"email", :href=>"mailto:#{Me::EMAIL}", :rel=>"email"}
               %span{:class=>"type"}
                 pref
                 (email me)
@@ -81,21 +83,17 @@ __END__
               %dd
                 %textarea{:name=>"message", :class=>"growable"}
                   Hi. My name is Curious.
-            %input{:type=>"submit", :value=>"Send your hello!"} 
+            %input{:type=>"submit", :value=>"say hello"} 
             %span{:class=>"not"}
-              or 
+              or maybe 
               %a{:href=>"#", :rel=>"not"}
-                not
+                tomorrow
     %hr
     #footer
       %span{:id=>"copy"}
         &copy; &infin;
-      %br 
-      %a{:href=>"http://www.last.fm/user/softprops", :rel=>"me", :class=>"url"}
-        listen
-      &#9679;
-      %a{:href=>"http://www.twitter.com/softprops", :rel=>"me", :class=>"url"}
-        follow
       %p#important
-        &#150;live happily
-    %script{:type=>"text/javascript", :src=>"./javascripts/app.js"}
+        &#150;live happily 
+        %span.blue 
+          &#x2764;
+    %script{:type=>"text/javascript", :src=>"js/app.js"}
