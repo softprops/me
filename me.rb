@@ -1,8 +1,11 @@
-%w(sinatra/base pony).each { |l| require l }
+%w(sinatra/base haml pony).each { |l| require l }
 
 class Me < Sinatra::Base
   
   EMAIL = ENV['email']
+  
+  set :root, File.dirname(__FILE__)
+  set :app_file, __FILE__
   
   get '/' do
     haml :index
