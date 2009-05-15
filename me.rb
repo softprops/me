@@ -102,4 +102,6 @@ __END__
         &#150;live happily 
         %span.blue 
           &#x2764;
+      %div#lost
+        4 8 15 16 23 42
     %script{ :type => "text/javascript", :src => "js/app.js" }
