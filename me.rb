@@ -24,7 +24,7 @@ class Me < Sinatra::Base
   private 
     def send_mail
       Pony.mail(:to      => EMAIL, 
-                :from    => 'curious@example.com', 
+                :from    => 'curious@lessis.me', 
                 :subject => 'message from lessis.me', 
                 :body    => params[:message]) if ENV['production']
     end
