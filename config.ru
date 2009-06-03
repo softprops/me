@@ -2,5 +2,5 @@
 
 use Rack::ShowExceptions
 use Rack::Session::Cookie
-use Rack::Flash, :accessorize => [:notice]
+use Rack::Flash, :accessorize => [:notice, :err] , :sweep => true
 run Me

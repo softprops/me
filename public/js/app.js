@@ -194,23 +194,35 @@
 		return false;
 	});
 	
-	$("textarea").focus(function(){
+	$("#message").growable();
+	$("#message").focus(function(){
 		$(this).text("");
 		$(this).css({
 			color:"#333"
 		});
-	}).growable();
+	});
+	
+	$("#email").focus(function(){
+		$(this).attr("value", "");
+		$(this).css({
+			color:"#333"
+		});
+	});
 	
 	
 	$('#flash').hide()
-	.slideDown('fast',function(){
+		.slideDown('fast',function(){
 			setTimeout(function(){
 				$('#flash').slideUp('fast');
 			},2000);
 	});
 	
 	function resetMessage(){
-		$("textarea").text("Hi. My name is Curious.")
+		$("#message").text("Hi. My name is Curious.")
+		.css({
+			color:"#ccc"
+		});
+		$("#email").attr("value", "*@***.com")
 		.css({
 			color:"#ccc"
 		});

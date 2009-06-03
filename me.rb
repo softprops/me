@@ -1,8 +1,10 @@
-%w(sinatra/base haml pony).each { |l| require l }
+%w(sinatra/base haml pony pp).each { |l| require l }
 
 class Me < Sinatra::Base
-  EMAIL = ENV['email']
+  EMAIL = ENV['EMAIL_TO']
+  EMAIL_REGEX = /^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
   
+  set :run, false
   set :root, File.dirname(__FILE__)
   set :app_file, __FILE__
   
@@ -12,8 +14,9 @@ class Me < Sinatra::Base
  
   post '/' do
     if params[:message]
-      send_mail
-      flash[:notice] = "thanks for saying hello"
+      if send_mail!
+        flash[:notice] = "thanks for saying hello"
+      end
     end
     
     redirect '/ '
@@ -22,15 +25,53 @@ class Me < Sinatra::Base
   use_in_file_templates!
   
   private 
-    def send_mail
+
+    def send_mail!
       Pony.mail(:to      => EMAIL, 
-                :from    => 'curious@lessis.me', 
+                :from    => params[:email], 
                 :subject => 'message from lessis.me', 
-                :body    => params[:message]) if ENV['production']
+                :body    => params[:message]) if send_mail?
+    end
+    
+    def send_mail?
+      valid_env? && valid_form?
+    end
+
+    def valid_form?
+      valid_message? && valid_email?
+    end
+    
+    def valid_message?
+      msg = params[:message]
+      flash[:err] = "you might want to say a bit more than that next time <br/>" if msg.blank?
+      msg
+    end
+    
+    def valid_email?
+      valid = params['email'] =~ EMAIL_REGEX
+      flash[:err]= [flash[:err], "i'm not smart enough to know what “#{params['email']}” means"].join('') if !valid
+      valid
+    end
+    
+    def valid_env?
+      ENV['production']
+      true
     end
 end
 
 __END__
+
+@@ mine
+%ul
+  %li
+    sinatra.version
+    = Sinatra::VERSION
+  %li
+    env.email
+    = Me::EMAIL
+  %li
+    rack.env
+    = ENV.inspect
 
 @@ index
 !!!
@@ -43,13 +84,14 @@ __END__
       less is me
     %link{ :type => "text/css", :rel => "stylesheet", :href => "css/app.css" }
   %body
-    - if flash[:notice]
+    - if flash[:notice] || flash[:err]
       #flash
-        =flash[:notice]
+        = flash[:notice] || flash[:err]
+        
     %ul#things
       %li
         %h1
-          hi. my name is 
+          hi. my name is
           %span{ :class => "vcard" }
             %span{ :class => "fn" }
               Doug
@@ -66,32 +108,38 @@ __END__
                 (email me)
       %li
         %h1
-          i share 
+          i type
           %a{ :href => "http://softprops.github.com", :rel => "me" }
             code
+      %li
+        %h1
+          i hear
+          %a{ :href => "http://last.fm/user/softprops", :rel => "me" }
+            music
       %li
         %h1
           i sometimes
           %a{ :href => "http://www.twitter.com/softprops", :rel => "me" }
             tweet
-      %li
+      %li.say
         %h1
-          not much else to 
-          %a{ :href => "mailto:soft@softprops.net", :rel => "hello" }
-            say
-	
+          say  
+          %a{ :href => "mailto:#{Me::EMAIL}", :rel => "hello" }
+            hello
         #new_message
           %form{ :action => "/", :method => "post" }
-            %dl
-              %dt
-                %label{ :for => "message" }
-                  so say it for me.
-              %dd
-                %textarea{ :name => "message", :class => "growable" }
-                  Hi. My name is Curious.
-            %input{ :type => "submit", :value => "say hello" } 
+            
+            %textarea{ :name => "message", :id => "message", :class => "growable" }
+              Hi. My name is Curious.
+            
+            %label{ :for => "email" }
+              my email address is
+            %input{ :type => "text", :name => "email", :id => "email", :value => "..." }
+              
+            %input{ :class => "btn", :type => "submit", :value => "send today" } 
+            
             %span{ :class => "not" }
-              or maybe 
+              or
               %a{ :href => "#", :rel => "not" }
                 tomorrow
     %hr
