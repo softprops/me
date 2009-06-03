@@ -153,3 +153,11 @@ __END__
       %div#lost
         4 8 15 16 23 42
     %script{ :type => "text/javascript", :src => "js/app.js" }
+    
+    %script{ :type =>"text/javascript" }
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    %script{ :type => "text/javascript" }
+      var pageTracker = _gat._getTracker("UA-9140324-1");
+      pageTracker._trackPageview();
+    
