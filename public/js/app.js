@@ -183,6 +183,11 @@
 	$("a[rel='hello']").click(function(){
 		$("#new_message").slideToggle("slow", function(){
 			resetMessage();
+			if($("#new_message").css("display")=='none') {
+				$.scrollTo("body",{duration:500});
+			} else {
+				$.scrollTo("#new_message",{duration:500});
+			}
 		});
 		return false;
 	});
@@ -190,6 +195,7 @@
 	$("a[rel='not']").click(function(){
 		 $("#new_message").slideToggle("slow", function(){
 			resetMessage();
+			$.scrollTo("body",{duration:500});
 		});
 		return false;
 	});
@@ -226,7 +232,6 @@
 		.css({
 			color:"#ccc"
 		});
-		$.scrollTo("#new_message",{duration:500});
 	}
 	
 })(jQuery);
