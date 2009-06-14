@@ -1,2 +1,4 @@
 .DS_Store
 Capfile
+tmp/always_restart.txt
+tmp/restart.txt

@@ -1,4 +1,4 @@
-%w(sinatra/base haml pony pp).each { |l| require l }
+%w(sinatra/base haml pony).each { |l| require l }
 
 class Me < Sinatra::Base
   EMAIL = ENV['EMAIL_TO']
@@ -18,10 +18,13 @@ class Me < Sinatra::Base
         flash[:notice] = "thanks for saying hello"
       end
     end
-    
     redirect '/ '
   end
 
+  not_found do
+    haml :not_found
+  end
+  
   use_in_file_templates!
   
   private 
@@ -55,93 +58,23 @@ class Me < Sinatra::Base
     
     def valid_env?
       ENV['production']
-      true
     end
 end
 
 __END__
 
-@@ mine
-%ul
-  %li
-    sinatra.version
-    = Sinatra::VERSION
-  %li
-    env.email
-    = Me::EMAIL
-  %li
-    rack.env
-    = ENV.inspect
-
-@@ index
+@@ layout
 !!!
 %html
   %head
-    %meta{ :name => "keywords", :content => "doug tangren,less,lessisme,simple,code,ruby,java,blog" } 
+    %meta{ :name => "keywords", :content => "doug tangren,less,lessisme,simple,code,ruby,java" } 
     %meta{ :name => "description", :content => "less more and more doug" } 
     %meta{ :name => "author", :content => "Doug Tangren" } 
     %title 
       less is me
-    %link{ :type => "text/css", :rel => "stylesheet", :href => "css/app.css" }
+    %link{ :type => "text/css", :rel => "stylesheet", :href => "/css/app.css" }
   %body
-    - if flash[:notice] || flash[:err]
-      #flash
-        = flash[:notice] || flash[:err]
-        
-    %ul#things
-      %li
-        %h1
-          hi. my name is
-          %span{ :class => "vcard" }
-            %span{ :class => "fn" }
-              Doug
-            %a{ :href=>"/", :class => "url hdn" }
-              doug
-            %span{ :class => "geo" }
-              %span{ :class => "latitude", :title => "40.438651" }
-                40.777705 
-              %span{ :class => "longitude", :title => "-79.929249" }
-                -73.947958
-            %a{ :class => "email", :href => "mailto:#{Me::EMAIL}", :rel => "email" }
-              %span{ :class => "type" }
-                pref
-                (email me)
-      %li
-        %h1
-          i type
-          %a{ :href => "http://softprops.github.com", :rel => "me" }
-            code
-      %li
-        %h1
-          i hear
-          %a{ :href => "http://last.fm/user/softprops", :rel => "me" }
-            music
-      %li
-        %h1
-          i sometimes
-          %a{ :href => "http://www.twitter.com/softprops", :rel => "me" }
-            tweet
-      %li.say
-        %h1
-          say  
-          %a{ :href => "mailto:#{Me::EMAIL}", :rel => "hello" }
-            hello
-        #new_message
-          %form{ :action => "/", :method => "post" }
-            
-            %textarea{ :name => "message", :id => "message", :class => "growable" }
-              Hi. My name is Curious.
-            
-            %label{ :for => "email" }
-              my email address is
-            %input{ :type => "text", :name => "email", :id => "email", :value => "..." }
-              
-            %input{ :class => "btn", :type => "submit", :value => "send today" } 
-            
-            %span{ :class => "not" }
-              or
-              %a{ :href => "#", :rel => "not" }
-                tomorrow
+    = yield
     %hr
     #footer
       %span{ :id => "copy" }
@@ -152,12 +85,81 @@ __END__
           &#x2764;
       %div#lost
         4 8 15 16 23 42
+    
     %script{ :type => "text/javascript", :src => "js/app.js" }
     
     %script{ :type =>"text/javascript" }
       var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
       document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    
     %script{ :type => "text/javascript" }
       var pageTracker = _gat._getTracker("UA-9140324-1");
       pageTracker._trackPageview();
+      
+@@ not_found
+%a{ :href => '/' }
+  %h1.not-found
+    !_.found?
+
+@@ index
+- if flash[:notice] || flash[:err]
+  #flash
+    = flash[:notice] || flash[:err]
+    
+%ul#things
+  %li
+    %h1
+      hi. my name is
+      %a{ :href=> "/" }
+        doug
+    %span{ :class => "vcard" }
+      %span{ :class => "fn" }
+        Doug
+      %a{ :href=>"/", :class => "url hdn" }
+        doug
+      %span{ :class => "geo" }
+        %span{ :class => "latitude", :title => "40.438651" }
+          40.777705 
+        %span{ :class => "longitude", :title => "-79.929249" }
+          -73.947958
+      %a{ :class => "email", :href => "mailto:#{Me::EMAIL}", :rel => "email" }
+        %span{ :class => "type" }
+          pref
+          (email me)
+  %li
+    %h1
+      i type
+      %a{ :href => "http://softprops.github.com", :rel => "me" }
+        code
+  %li
+    %h1
+      i hear
+      %a{ :href => "http://last.fm/user/softprops", :rel => "me" }
+        music
+  %li
+    %h1
+      i sometimes
+      %a{ :href => "http://www.twitter.com/softprops", :rel => "me" }
+        tweet
+  %li.say
+    %h1
+      say  
+      %a{ :href => "mailto:#{Me::EMAIL}", :rel => "hello" }
+        hello
+    #new_message
+      %form{ :action => "/", :method => "post" }
+        
+        %textarea{ :name => "message", :id => "message", :class => "growable" }
+          Hi. My name is Curious.
+        
+        %label{ :for => "email" }
+          my email address is
+        %input{ :type => "text", :name => "email", :id => "email", :value => "..." }
+          
+        %input{ :class => "btn", :type => "submit", :value => "send today" } 
+        
+        %span{ :class => "not" }
+          or
+          %a{ :href => "#", :rel => "not" }
+            tomorrow
     
