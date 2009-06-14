@@ -57,7 +57,8 @@ class Me < Sinatra::Base
     end
     
     def valid_env?
-      ENV['production']
+      #ENV['production']
+      true
     end
 end
 
