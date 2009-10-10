@@ -1,12 +1,16 @@
 %w(sinatra/base haml pony).each { |l| require l }
 
 class Me < Sinatra::Base
-  EMAIL = ENV['EMAIL_TO']
+  EMAIL = ENV['EMAIL_TO'] || 'd.tangren@gmail.com'
   EMAIL_REGEX = /^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
   
-  set :run, false
-  set :root, File.dirname(__FILE__)
-  set :app_file, __FILE__
+  configure do
+    set :run, false
+    set :root, File.dirname(__FILE__)
+    set :app_file, __FILE__
+    set :static, true
+    set :site, ENV['SITE_NAME'] || 'lessis.me'
+  end
   
   get '/' do
     haml :index
@@ -14,8 +18,14 @@ class Me < Sinatra::Base
  
   post '/' do
     if params[:message]
-      if send_mail!
-        flash[:notice] = "thanks for saying hello"
+      if valid?
+        begin
+          send_mail!
+          flash[:notice] = "thanks for saying hello"
+        rescue Exception => e
+          puts e
+          flash[:err] = "Opps, some thing is missing"
+        end
       end
     end
     redirect '/ '
@@ -30,35 +40,28 @@ class Me < Sinatra::Base
   private 
 
     def send_mail!
-      Pony.mail(:to      => EMAIL, 
-                :from    => params[:email], 
-                :subject => 'message from lessis.me', 
-                :body    => params[:message]) if send_mail?
+      puts "#sent_mail params => #{params.inspect} valid? => #{valid?}"
+      Pony.mail({
+        :to      => EMAIL, 
+        :from    => params[:email], 
+        :subject => "new message from %s" % options.site, 
+        :body    => params[:message]}) if valid?
+    end
+  
+    def valid?
+      validate_message
+      validate_email
+      flash[:err].nil?
     end
     
-    def send_mail?
-      valid_env? && valid_form?
-    end
-
-    def valid_form?
-      valid_message? && valid_email?
-    end
-    
-    def valid_message?
+    def validate_message
       msg = params[:message]
-      flash[:err] = "you might want to say a bit more than that next time <br/>" if msg.blank?
-      msg
+      flash[:err] = "&gt; There&apos;s more to say than that<br/>" if msg.blank?
     end
     
-    def valid_email?
+    def validate_email
       valid = params['email'] =~ EMAIL_REGEX
-      flash[:err]= [flash[:err], "i'm not smart enough to know what “#{params['email']}” means"].join('') if !valid
-      valid
-    end
-    
-    def valid_env?
-      #ENV['production']
-      true
+      flash[:err] = [flash[:err], "&gt; That email won&apos;t fly"].join('') if !valid
     end
 end
 
@@ -66,23 +69,23 @@ __END__
 
 @@ layout
 !!!
-%html
+%html{html_attrs}
   %head
+    %meta{ "http-equiv" => "Content-Type", :content => "text/html;charset=utf-8" }
     %meta{ :name => "keywords", :content => "doug tangren,less,lessisme,simple,code,ruby,java" } 
     %meta{ :name => "description", :content => "less more and more doug" } 
     %meta{ :name => "author", :content => "Doug Tangren" } 
     %title 
-      less is me
+      lessis (me)
     %link{ :type => "text/css", :rel => "stylesheet", :href => "/css/app.css" }
   %body
     = yield
-    %hr
     #footer
       %span{ :id => "copy" }
-        &copy; &infin;
+        &copy; little
       %p#important
         &#150;live happily 
-        %span.blue 
+        %span.color 
           &#x2764;
       %div#lost
         4 8 15 16 23 42
@@ -110,7 +113,7 @@ __END__
 %ul#things
   %li
     %h1
-      hi. my name is
+      hi. i&apos;m
       %a{ :href=> "/" }
         doug
     %span{ :class => "vcard" }
@@ -132,35 +135,31 @@ __END__
       i type
       %a{ :href => "http://softprops.github.com", :rel => "me" }
         code
-  %li
-    %h1
-      i hear
-      %a{ :href => "http://last.fm/user/softprops", :rel => "me" }
-        music
+
   %li
     %h1
       i sometimes
       %a{ :href => "http://www.twitter.com/softprops", :rel => "me" }
         tweet
+
   %li.say
     %h1
       say  
       %a{ :href => "mailto:#{Me::EMAIL}", :rel => "hello" }
         hello
-    #new_message
+    #new-message
       %form{ :action => "/", :method => "post" }
         
-        %textarea{ :name => "message", :id => "message", :class => "growable" }
+        %textarea{ :rows => 3, :cols => 10, :name => "message", :id => "message", :class => "growable" }
           Hi. My name is Curious.
         
         %label{ :for => "email" }
-          my email address is
+          your email address is
         %input{ :type => "text", :name => "email", :id => "email", :value => "..." }
           
-        %input{ :class => "btn", :type => "submit", :value => "send today" } 
+        %input{ :class => "btn", :type => "submit", :value => "send it" } 
         
         %span{ :class => "not" }
           or
           %a{ :href => "#", :rel => "not" }
-            tomorrow
-    
+            not

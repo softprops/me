@@ -170,8 +170,8 @@
 })(jQuery);
 
 (function(){
-
-	$("#new_message").hide();
+  var msg ="#message", newMsg = "#new-message", list = "#list", email = "#email";
+	$(newMsg).hide();
 
   $("#list").css({
     opacity:0.0
@@ -181,19 +181,20 @@
   }, 1000);
 
 	$("a[rel='hello']").click(function(){
-		$("#new_message").slideToggle("slow", function(){
+	  $(newMsg).slideToggle("slow", function(){
 			resetMessage();
-			if($("#new_message").css("display")=='none') {
+      if($(newMsg).css("display")=='none') {
 				$.scrollTo("body",{duration:500});
 			} else {
-				$.scrollTo("#new_message",{duration:500});
+				$.scrollTo(newMsg,{duration:500});
 			}
 		});
 		return false;
 	});
 	
 	$("a[rel='not']").click(function(){
-		 $("#new_message").slideToggle("slow", function(){
+	   
+		 $(newMsg).slideToggle("slow", function(){
 			resetMessage();
 			$.scrollTo("body",{duration:500});
 		});
@@ -202,38 +203,34 @@
 	
 	$("#message").growable();
 	$("#message").focus(function(){
-		$(this).text("");
-		$(this).css({
+		$(this).text("")
+		.css({
 			color:"#333"
 		});
 	});
 	
 	$("#email").focus(function(){
-		$(this).attr("value", "");
-		$(this).css({
+		$(this).attr("value", "")
+		.css({
 			color:"#333"
 		});
 	});
-	
 	
 	$('#flash').hide()
 		.slideDown('fast',function(){
 			setTimeout(function(){
 				$('#flash').slideUp('fast');
-			},2000);
+			}, 2000);
 	});
 	
 	function resetMessage(){
-		$("#message").text("Hi. My name is Curious.")
+	  $(msg).text("Hi. My name is Curious.")
 		.css({
 			color:"#ccc"
 		});
-		$("#email").attr("value", "*@***.com")
+		$(email).attr("value", "me@some.com")
 		.css({
 			color:"#ccc"
 		});
 	}
-	
 })(jQuery);
-
-
