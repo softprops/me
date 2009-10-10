@@ -1,7 +1,7 @@
 %w(sinatra/base haml pony).each { |l| require l }
 
 class Me < Sinatra::Base
-  EMAIL = ENV['EMAIL_TO'] || 'd.tangren@gmail.com'
+  EMAIL = ENV['EMAIL_TO']
   EMAIL_REGEX = /^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
   
   configure do
