@@ -9,6 +9,7 @@ class Me < Sinatra::Base
     set :root, File.dirname(__FILE__)
     set :app_file, __FILE__
     set :static, true
+    enable :inline_templates
     set :site, ENV['SITE_NAME'] || 'lessis.me'
   end
   
@@ -34,8 +35,6 @@ class Me < Sinatra::Base
   not_found do
     haml :not_found
   end
-  
-  use_in_file_templates!
   
   private 
 
@@ -109,12 +108,13 @@ __END__
 - if flash[:notice] || flash[:err]
   #flash
     = flash[:notice] || flash[:err]
-    
+#group
+  {
 %ul#things
   %li
     %h1
       hi. i&apos;m
-      %a{ :href=> "/" }
+      %a{ :href=> "http://softpress.tumblr.com" }
         doug
     %span{ :class => "vcard" }
       %span{ :class => "fn" }
@@ -135,13 +135,17 @@ __END__
       i type
       %a{ :href => "http://softprops.github.com", :rel => "me" }
         code
-
+  %li
+    %h1
+      i 
+      %a{ :href => "http://asoftsea.tumblr.com", :rel => "me" }
+        write 
+      about code
   %li
     %h1
       i sometimes
       %a{ :href => "http://www.twitter.com/softprops", :rel => "me" }
         tweet
-
   %li.say
     %h1
       say  

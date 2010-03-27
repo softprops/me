@@ -3,7 +3,7 @@ a:active, a:focus { outline:none; }
 button::-moz-focus-inner, input::-moz-focus-inner { border: 0; outline:none; }
 body { font-family:'Helvetica Neue',Arial,Helvetica,sans-serif;  }
 ul { list-style:none; text-align:right; width:99%; }
-li { font-size:70px; font-weight:bold;  color:#f5f5f5; letter-spacing:-12px; margin-right:15px; }
+li { font-size:60px; font-weight:bold;  color:#f5f5f5; letter-spacing:-12px; margin-right:15px; }
 li { line-height:1.25em; margin:.15em 0 .5em 0; }
 li:hover { color:#231F20; /*cmky black 75.68.67.90*/ }
 li:hover a:link, li:hover a:visited { color:#02eaff; }
@@ -17,7 +17,7 @@ a:hover { color:#BFF313; color:#02EAFF; }
 #footer { margin-top:4px; }
 #footer a:link,  #footer a:visited { text-decoration:none; color:#ccc;  }
 #footer a:hover { color:#02EAFF; }
-#footer #important { text-align:right; float:right; }
+#footer #important { text-align:right; float:right; font-family:georgia, times new roman, serif; font-style:italic; }
 #new-message { letter-spacing:-5px; text-decoration:none; }
 #lost { color:#f5f5f5; }
 .color { color:#02EAFF; }
@@ -31,3 +31,4 @@ input.btn { margin:10px 0 0 0; font-weight:bold; color:#999; background-color:#e
 	 -webkit-border-radius:0.6em; -moz-border-radius:1em; }
 input.btn:hover { background:#F3F3F3; border:4px solid #eee; }
 .not-found { font-size:1600%; text-align:center; }
+#group { float:left; font-size:400px; color:#333;}
